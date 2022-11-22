@@ -22,13 +22,36 @@ typedef struct {
 	char CPF[12];
 	char nome[50];
 	float salario;
-	int situacao_cadastro; // 0 --> ativo / 1 --> excluido
+	char sit; // 0 --> ativo / 1 --> excluido
 } Funcionario;
+
+void listar(FILE *fp) {
+	Funcionario registro;
+	int i, num_registros;
+	
+	fseek(fp, 0, SEEK_END);
+	num_registros = ftell(fp) / sizeof(Funcionario);
+	
+	fseek(fp, 0, SEEK_SET);
+	printf("");
+	for (i=0; i<num_registros; i++) {
+		//fread(registro, sizeof(Funcionario), SEEK_CUR);
+		fread(registro.CPF, sizeof(registro.CPF), 1, fp);
+		fread(registro.nome, sizeof(registro.nome), 1, fp);
+		fread(registro.salario, sizeof(registro.salario), 1, fp);
+		fread(registro.sit, sizeof(registro.sit), 1, fp);
+		if (registro.sit == '1') continue;
+		printf("%12s | %50s | %f", registro.CPF, registro.nome, registro.salario);
+	}
+}
 
 int main() {
 	int opcao, exit=0;
+	FILE *fp;
 	
 	setlocale(LC_ALL, "Portuguese");
+	
+	fopen("cadfun.dad", "a+b");
 	
 	// Menu
 	do {
@@ -48,6 +71,9 @@ int main() {
 		
 		printf("\n");
 		switch (opcao) {
+			case 5:
+				listar(fp);
+				break;
 			case 0: // Sair / Fechar
 				printf("Fechando...\n");
 				Sleep(500);
@@ -60,5 +86,6 @@ int main() {
 		}
 	} while (!exit);
 	
+	fclose(fp);
 	return 0;
 }
