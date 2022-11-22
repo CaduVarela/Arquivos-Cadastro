@@ -33,7 +33,7 @@ void inclusao(FILE *fp) {
 	do{
 		system("cls");
 		printf("Digite o CPF: ");
-		//falta checar se já existe cpf igual
+		//falta checar a primary key
 		gets(registro.CPF);
 		fflush(stdin);
 
@@ -56,6 +56,47 @@ void inclusao(FILE *fp) {
 		
 }
 
+int buscar(FILE *fp,char cpf[12]){
+	int i=0;
+	char cpf_corrente[12];
+	
+	while(!feof(fp)){
+		fseek(fp,i*sizeof(Funcionario),SEEK_SET);
+		fread(&cpf_corrente,sizeof(char)*12,1,fp);
+
+		if(strcmp(cpf_corrente,cpf)==0) return i;
+
+		i++;
+	}
+	
+	return -1;
+}
+
+int consultar(FILE *fp){
+	Funcionario registro;
+	char cpf[12];
+	int indice;
+
+	system("cls");
+	printf("Digite o CPF: ");
+	gets(cpf);
+	
+	indice = buscar(fp, cpf);
+
+	if(indice == -1){
+		printf("CPF não encontrado!\n");
+		system("pause");
+		return -1;
+	}
+
+	fseek(fp, indice*sizeof(Funcionario), SEEK_SET);
+	fread(&registro, sizeof(Funcionario), 1, fp);
+
+	printf("CPF: %s \nNome: %s \nSalario: %.2f\n", registro.CPF, registro.nome, registro.salario);
+	system("pause");
+
+	return 0;
+}
 
 int main() {
 	int opcao, exit=0;
@@ -85,6 +126,9 @@ int main() {
 		switch (opcao) {
 			case 1:
 				inclusao(fp);
+				break;
+			case 4:
+				consultar(fp);
 				break;
 			case 0: // Sair / Fechar
 				printf("Fechando...\n");
