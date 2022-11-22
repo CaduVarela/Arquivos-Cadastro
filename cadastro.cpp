@@ -8,41 +8,54 @@
 /*
 Funcionalidades
 
-(X) Inclusão
-( ) Exclusão
-( ) Alteração
+(X) Inclusï¿½o
 ( ) Consulta
+( ) Exclusï¿½o
+( ) Alteraï¿½ï¿½o
 ( ) Listagem
 ( ) Lixeira
 
 */
 
-// Registro Funcionário
+// Registro Funcionï¿½rio
 typedef struct {
 	char CPF[12];
 	char nome[50];
 	float salario;
-	char sit; // 0 --> ativo / 1 --> excluido
+	char sit; // 0 --> ativo / 1 --> passivo
 } Funcionario;
 
 void inclusao(FILE *fp) {
 	Funcionario registro;
-	
-	system("cls");
-	printf("Digite o CPF: ");
-	gets(registro.CPF);
-	
-	printf("Digite o nome: ");
-	gets(registro.nome);
-	
-	printf("Digite o salario: ");
-	scanf("%f", &registro.salario);
-	
-	registro.sit = '0';
-	
+	int continuar=1;
 	fseek(fp, 0, SEEK_END);
-	fwrite(&registro, sizeof(Funcionario), 1, fp);
+
+	do{
+		system("cls");
+		printf("Digite o CPF: ");
+		//falta checar se jÃ¡ existe cpf igual
+		gets(registro.CPF);
+		fflush(stdin);
+
+		printf("Digite o nome: ");
+		gets(registro.nome);
+		fflush(stdin);
+
+		printf("Digite o salario: ");
+		scanf("%f", &registro.salario);
+		fflush(stdin);
+
+		registro.sit = '0';
+		fwrite(&registro, sizeof(Funcionario), 1, fp);
+
+		printf("Deseja continuar? (1-sim / 0-nÃ£o): ");
+		scanf("%d",&continuar);
+		fflush(stdin);
+
+	}while(continuar);
+		
 }
+
 
 int main() {
 	int opcao, exit=0;
@@ -64,7 +77,7 @@ int main() {
 		printf("6 - Lixeira\n");
 		printf("0 - Sair\n\n");
 		
-		printf("Selecione a opção: ");
+		printf("Selecione a opï¿½ï¿½o: ");
 		opcao = getche(); /* getche() retorna o codigo ASCII da tecla */
 		opcao -= 48; /* tranforma o codigo da tecla no numero correspondente */
 		
@@ -79,7 +92,7 @@ int main() {
 				exit = 1;
 				break;
 			default:
-				printf("Opção inválida!\n");
+				printf("Opï¿½ï¿½o invï¿½lida!\n");
 				Sleep(500);
 				break;
 		}
