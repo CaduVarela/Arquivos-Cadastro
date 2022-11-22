@@ -8,7 +8,7 @@
 /*
 Funcionalidades
 
-( ) Inclusão
+(X) Inclusão
 ( ) Exclusão
 ( ) Alteração
 ( ) Consulta
@@ -22,13 +22,35 @@ typedef struct {
 	char CPF[12];
 	char nome[50];
 	float salario;
-	int situacao_cadastro; // 0 --> ativo / 1 --> excluido
+	char sit; // 0 --> ativo / 1 --> excluido
 } Funcionario;
+
+void inclusao(FILE *fp) {
+	Funcionario registro;
+	
+	system("cls");
+	printf("Digite o CPF: ");
+	gets(registro.CPF);
+	
+	printf("Digite o nome: ");
+	gets(registro.nome);
+	
+	printf("Digite o salario: ");
+	scanf("%f", &registro.salario);
+	
+	registro.sit = '0';
+	
+	fseek(fp, 0, SEEK_END);
+	fwrite(&registro, sizeof(Funcionario), 1, fp);
+}
 
 int main() {
 	int opcao, exit=0;
+	FILE *fp;
 	
 	setlocale(LC_ALL, "Portuguese");
+	
+	fp = fopen("cadfun.dad", "a+b");
 	
 	// Menu
 	do {
@@ -48,6 +70,9 @@ int main() {
 		
 		printf("\n");
 		switch (opcao) {
+			case 1:
+				inclusao(fp);
+				break;
 			case 0: // Sair / Fechar
 				printf("Fechando...\n");
 				Sleep(500);
@@ -60,5 +85,6 @@ int main() {
 		}
 	} while (!exit);
 	
+	fclose(fp);
 	return 0;
 }
