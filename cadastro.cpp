@@ -8,41 +8,38 @@
 /*
 Funcionalidades
 
-( ) Inclusão
-( ) Exclusão
-( ) Alteração
-( ) Consulta
+( ) Inclusï¿½o
+( ) Exclusï¿½o
+( ) Alteraï¿½ï¿½o
 ( ) Listagem
 ( ) Lixeira
 
 */
 
-// Registro Funcionário
+// Registro Funcionï¿½rio
 typedef struct {
 	char CPF[12];
 	char nome[50];
 	float salario;
-	char sit; // 0 --> ativo / 1 --> excluido
+	char sit; // 0 --> ativo / 1 --> passivo
 } Funcionario;
 
 void listar(FILE *fp) {
 	Funcionario registro;
-	int i, num_registros;
-	
+	int continuar=1;
 	fseek(fp, 0, SEEK_END);
 	num_registros = ftell(fp) / sizeof(Funcionario);
 	
-	fseek(fp, 0, SEEK_SET);
-	printf("");
-	for (i=0; i<num_registros; i++) {
-		//fread(registro, sizeof(Funcionario), SEEK_CUR);
-		fread(registro.CPF, sizeof(registro.CPF), 1, fp);
-		fread(registro.nome, sizeof(registro.nome), 1, fp);
-		fread(registro.salario, sizeof(registro.salario), 1, fp);
-		fread(registro.sit, sizeof(registro.sit), 1, fp);
-		if (registro.sit == '1') continue;
-		printf("%12s | %50s | %f", registro.CPF, registro.nome, registro.salario);
+	while(!feof(fp)){
+		fseek(fp,i*sizeof(Funcionario),SEEK_SET);
+		fread(&cpf_corrente,sizeof(char)*12,1,fp);
+
+		if(strcmp(cpf_corrente,cpf)==0) return i;
+
+		i++;
 	}
+	
+	return -1;
 }
 
 int main() {
@@ -51,7 +48,7 @@ int main() {
 	
 	setlocale(LC_ALL, "Portuguese");
 	
-	fopen("cadfun.dad", "a+b");
+	fp = fopen("cadfun.dad", "a+b");
 	
 	// Menu
 	do {
@@ -65,7 +62,7 @@ int main() {
 		printf("6 - Lixeira\n");
 		printf("0 - Sair\n\n");
 		
-		printf("Selecione a opção: ");
+		printf("Selecione a opï¿½ï¿½o: ");
 		opcao = getche(); /* getche() retorna o codigo ASCII da tecla */
 		opcao -= 48; /* tranforma o codigo da tecla no numero correspondente */
 		
@@ -80,7 +77,7 @@ int main() {
 				exit = 1;
 				break;
 			default:
-				printf("Opção inválida!\n");
+				printf("Opï¿½ï¿½o invï¿½lida!\n");
 				Sleep(500);
 				break;
 		}
