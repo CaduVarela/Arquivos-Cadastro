@@ -8,24 +8,16 @@
 /*
 Funcionalidades
 
-<<<<<<< HEAD
-(X) Inclusï¿½o
-(X) Consulta
-(X) Exclusï¿½o
-( ) Alteraï¿½ï¿½o
-( ) Consulta
-=======
 (X) Inclusão
-( ) Consulta
-( ) Exclusão
+(X) Consulta
+(X) Exclusão
 ( ) Alteração
->>>>>>> parent of e5db9b4 (Merge branch 'Listagem')
-( ) Listagem
+(X) Listagem
 ( ) Lixeira
 
 */
 
-// Registro Funcionï¿½rio
+// Registro Funcionário
 typedef struct {
 	char CPF[12];
 	char nome[50];
@@ -33,21 +25,14 @@ typedef struct {
 	char sit; // 0 --> ativo / 1 --> passivo
 } Funcionario;
 
-<<<<<<< HEAD
 void incluir(FILE *fp) {
-=======
-void inclusao(FILE *fp) {
->>>>>>> parent of e5db9b4 (Merge branch 'Listagem')
 	Funcionario registro;
 	int continuar=1;
 	fseek(fp, 0, SEEK_END);
 
 	do{
 		system("cls");
-<<<<<<< HEAD
 		fflush(stdin);
-=======
->>>>>>> parent of e5db9b4 (Merge branch 'Listagem')
 		printf("Digite o CPF: ");
 		//falta checar a primary key
 		gets(registro.CPF);
@@ -64,11 +49,7 @@ void inclusao(FILE *fp) {
 		registro.sit = '0';
 		fwrite(&registro, sizeof(Funcionario), 1, fp);
 
-<<<<<<< HEAD
-		printf("Deseja continuar? (1-sim / 0-nÃ£o): ");
-=======
 		printf("Deseja continuar? (1-sim / 0-não): ");
->>>>>>> parent of e5db9b4 (Merge branch 'Listagem')
 		scanf("%d",&continuar);
 		fflush(stdin);
 
@@ -80,6 +61,7 @@ int buscar(FILE *fp,char cpf[12]){
 	int i=0;
 	char cpf_corrente[12];
 	
+	fseek(fp, 0, SEEK_SET);
 	while(!feof(fp)){
 		fseek(fp,i*sizeof(Funcionario),SEEK_SET);
 		fread(&cpf_corrente,sizeof(char)*12,1,fp);
@@ -90,32 +72,6 @@ int buscar(FILE *fp,char cpf[12]){
 	}
 	
 	return -1;
-}
-
-int consultar(FILE *fp){
-	Funcionario registro;
-	char cpf[12];
-	int indice;
-
-	system("cls");
-	printf("Digite o CPF: ");
-	gets(cpf);
-	
-	indice = buscar(fp, cpf);
-
-	if(indice == -1){
-		printf("CPF não encontrado!\n");
-		system("pause");
-		return -1;
-	}
-
-	fseek(fp, indice*sizeof(Funcionario), SEEK_SET);
-	fread(&registro, sizeof(Funcionario), 1, fp);
-
-	printf("CPF: %s \nNome: %s \nSalario: %.2f\n", registro.CPF, registro.nome, registro.salario);
-	system("pause");
-
-	return 0;
 }
 
 void listar(FILE *fp, char sit) {
@@ -152,7 +108,7 @@ void listar(FILE *fp, char sit) {
 	system("pause");
 }
 
-int consultar(FILE *fp){
+int consultar (FILE *fp){
 	Funcionario registro;
 	char cpf[12];
 	int indice;
@@ -160,10 +116,11 @@ int consultar(FILE *fp){
 	system("cls");
 	printf("Digite o CPF: ");
 	gets(cpf);
+	fflush(stdin);
 	
 	indice = buscar(fp, cpf);
 	if(indice == -1){
-		printf("CPF nÃ£o encontrado!\n");
+		printf("\nCPF não encontrado!\n\n");
 		system("pause");
 		return -1;
 	}
@@ -171,43 +128,43 @@ int consultar(FILE *fp){
 	fseek(fp, indice*sizeof(Funcionario), SEEK_SET);
 	fread(&registro, sizeof(Funcionario), 1, fp);
 
-	printf("CPF: %s \nNome: %s \nSalario: %.2f\n", registro.CPF, registro.nome, registro.salario);
+	printf("\nCPF: %s \nNome: %s \nSalario: %.2f\n\n", registro.CPF, registro.nome, registro.salario);
 	system("pause");
 
 	return 0;
 }
 
 int excluir(FILE *fp){
-	Funcionario registro;
-	char cpf[12];
-	int indice,escolha;
+    Funcionario registro;
+    char cpf[12];
+    int indice,escolha;
 
-	system("cls");
-	fflush(stdin);
-	printf("Digite o CPF do FuncionÃ¡rio a ser excluÃ­do: ");
-	gets(cpf);
+    system("cls");
+    fflush(stdin);
+    printf("Digite o CPF do Funcionário a ser excluído: ");
+    gets(cpf);
 
-	indice = buscar(fp, cpf);
-	if(indice == -1){
-		printf("CPF nÃ£o encontrado!");
-		system("pause");
-		return -1;
-	}
 
-	fseek(fp,indice*sizeof(Funcionario), SEEK_SET);
-	fread(&registro, sizeof(Funcionario), 1, fp);
-	
-	printf("CPF: %s \nNome: %s \nSalario: %.2f\n", registro.CPF, registro.nome, registro.salario);
-	printf("\nConfirma FuncionÃ¡rio? (1-sim / 2-nÃ£o): ");
-	scanf("%d",&escolha);
+    indice = buscar(fp, cpf);
+    if(indice == -1){
+        printf("CPF não encontrado!");
+        system("pause");
+        return -1;
+    }
 
-	if(escolha == 1){
-		
-		printf("ExclusÃ£o do FuncionÃ¡rio com CPF %s feita com sucesso!\n\n", registro.CPF);
-		system("pause");
-	}
-	
-	return 0;
+    fseek(fp, indice*sizeof(Funcionario), SEEK_SET);
+    fread(&registro, sizeof(Funcionario), 1, fp);
+
+    printf("CPF: %s \nNome: %s \nSalario: %.2f\n", registro.CPF, registro.nome, registro.salario);
+    printf("\nConfirma Funcionário? (1-sim / 2-não): ");
+    scanf("%d",&escolha);
+
+    if(escolha == 1){
+        printf("Exclusão do Funcionário com CPF %s feita com sucesso!\n\n", registro.CPF);
+        system("pause");
+    }
+
+    return 0;
 }
 
 int main() {
@@ -230,31 +187,23 @@ int main() {
 		printf("6 - Lixeira\n");
 		printf("0 - Sair\n\n");
 		
-		printf("Selecione a opï¿½ï¿½o: ");
+		printf("Selecione a opção: ");
 		opcao = getche(); /* getche() retorna o codigo ASCII da tecla */
 		opcao -= 48; /* tranforma o codigo da tecla no numero correspondente */
 		
 		printf("\n");
 		switch (opcao) {
-<<<<<<< HEAD
 			case 1:
 				incluir(fp);
 				break;
 			case 2:
 				excluir(fp);
 				break;
-			case 4:
-				consultar(fp);
-=======
-			case 1: // Inclusão
-				inclusao(fp);
-				break;
 			case 4: // Consulta
 				consultar(fp);
 				break;
 			case 5: // Listar
 				listar(fp, '0');
->>>>>>> parent of e5db9b4 (Merge branch 'Listagem')
 				break;
 			case 0: // Sair / Fechar
 				printf("Fechando...\n");
@@ -262,7 +211,7 @@ int main() {
 				exit = 1;
 				break;
 			default:
-				printf("Opï¿½ï¿½o invï¿½lida!\n");
+				printf("Opção inválida!\n");
 				Sleep(500);
 				break;
 		}
