@@ -8,10 +8,10 @@
 /*
 Funcionalidades
 
-(X) Inclusão
-( ) Consulta
+( ) Inclusão
 ( ) Exclusão
 ( ) Alteração
+( ) Consulta
 ( ) Listagem
 ( ) Lixeira
 
@@ -22,114 +22,27 @@ typedef struct {
 	char CPF[12];
 	char nome[50];
 	float salario;
-	char sit; // 0 --> ativo / 1 --> passivo
+	char sit; // 0 --> ativo / 1 --> excluido
 } Funcionario;
 
-void inclusao(FILE *fp) {
+void listar(FILE *fp) {
 	Funcionario registro;
-	int continuar=1;
+	int i, num_registros;
+	
 	fseek(fp, 0, SEEK_END);
-
-	do{
-		system("cls");
-		printf("Digite o CPF: ");
-		//falta checar a primary key
-		gets(registro.CPF);
-		fflush(stdin);
-
-		printf("Digite o nome: ");
-		gets(registro.nome);
-		fflush(stdin);
-
-		printf("Digite o salario: ");
-		scanf("%f", &registro.salario);
-		fflush(stdin);
-
-		registro.sit = '0';
-		fwrite(&registro, sizeof(Funcionario), 1, fp);
-
-		printf("Deseja continuar? (1-sim / 0-não): ");
-		scanf("%d",&continuar);
-		fflush(stdin);
-
-	}while(continuar);
-		
-}
-
-int buscar(FILE *fp,char cpf[12]){
-	int i=0;
-	char cpf_corrente[12];
+	num_registros = ftell(fp) / sizeof(Funcionario);
 	
-	while(!feof(fp)){
-		fseek(fp,i*sizeof(Funcionario),SEEK_SET);
-		fread(&cpf_corrente,sizeof(char)*12,1,fp);
-
-		if(strcmp(cpf_corrente,cpf)==0) return i;
-
-		i++;
-	}
-	
-	return -1;
-}
-
-int consultar(FILE *fp){
-	Funcionario registro;
-	char cpf[12];
-	int indice;
-
-	system("cls");
-	printf("Digite o CPF: ");
-	gets(cpf);
-	
-	indice = buscar(fp, cpf);
-
-	if(indice == -1){
-		printf("CPF não encontrado!\n");
-		system("pause");
-		return -1;
-	}
-
-	fseek(fp, indice*sizeof(Funcionario), SEEK_SET);
-	fread(&registro, sizeof(Funcionario), 1, fp);
-
-	printf("CPF: %s \nNome: %s \nSalario: %.2f\n", registro.CPF, registro.nome, registro.salario);
-	system("pause");
-
-	return 0;
-}
-
-void listar(FILE *fp, char sit) {
-	Funcionario registro;
-	int i;
-	
-	system("cls");
-	// Linha (só estilização)
-	printf(" ");
-	for (i=0; i<80; i++) printf("_");
-	printf("\n| CPF%9s | Nome%-46s | Salario    |\n", "", "");
-	printf("|--------------+----------------------------------------------------+------------|\n");
-	//
-	
-	// Parte lógica
 	fseek(fp, 0, SEEK_SET);
-	while (!feof(fp)) {
-		fread(&registro, sizeof(Funcionario), 1, fp);
-		if (registro.sit != sit || feof(fp)) continue;
-		printf("| %12s | %-50s | %10.2f |\n", registro.CPF, registro.nome, registro.salario);
+	printf("");
+	for (i=0; i<num_registros; i++) {
+		//fread(registro, sizeof(Funcionario), SEEK_CUR);
+		fread(registro.CPF, sizeof(registro.CPF), 1, fp);
+		fread(registro.nome, sizeof(registro.nome), 1, fp);
+		fread(registro.salario, sizeof(registro.salario), 1, fp);
+		fread(registro.sit, sizeof(registro.sit), 1, fp);
+		if (registro.sit == '1') continue;
+		printf("%12s | %50s | %f", registro.CPF, registro.nome, registro.salario);
 	}
-	
-	// Linha (só estilização)
-	printf("|");
-	for (i=0; i<14; i++) printf("_");
-	printf("|");
-	for (i=0; i<52; i++) printf("_");
-	printf("|");
-	for (i=0; i<12; i++) printf("_");
-	printf("|");
-	printf("\n");
-	//
-	
-	system("pause");
 }
 
 int main() {
@@ -138,7 +51,7 @@ int main() {
 	
 	setlocale(LC_ALL, "Portuguese");
 	
-	fp = fopen("cadfun.dad", "a+b");
+	fopen("cadfun.dad", "a+b");
 	
 	// Menu
 	do {
@@ -158,14 +71,8 @@ int main() {
 		
 		printf("\n");
 		switch (opcao) {
-			case 1: // Inclusão
-				inclusao(fp);
-				break;
-			case 4: // Consulta
-				consultar(fp);
-				break;
-			case 5: // Listar
-				listar(fp, '0');
+			case 5:
+				listar(fp);
 				break;
 			case 0: // Sair / Fechar
 				printf("Fechando...\n");
