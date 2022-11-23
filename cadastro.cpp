@@ -9,8 +9,8 @@
 Funcionalidades
 
 (X) Inclus�o
-( ) Consulta
-( ) Exclus�o
+(X) Consulta
+(X) Exclus�o
 ( ) Altera��o
 ( ) Listagem
 ( ) Lixeira
@@ -25,13 +25,14 @@ typedef struct {
 	char sit; // 0 --> ativo / 1 --> passivo
 } Funcionario;
 
-void inclusao(FILE *fp) {
+void incluir(FILE *fp) {
 	Funcionario registro;
 	int continuar=1;
 	fseek(fp, 0, SEEK_END);
 
 	do{
 		system("cls");
+		fflush(stdin);
 		printf("Digite o CPF: ");
 		//falta checar a primary key
 		gets(registro.CPF);
@@ -82,7 +83,6 @@ int consultar(FILE *fp){
 	gets(cpf);
 	
 	indice = buscar(fp, cpf);
-
 	if(indice == -1){
 		printf("CPF não encontrado!\n");
 		system("pause");
@@ -95,6 +95,39 @@ int consultar(FILE *fp){
 	printf("CPF: %s \nNome: %s \nSalario: %.2f\n", registro.CPF, registro.nome, registro.salario);
 	system("pause");
 
+	return 0;
+}
+
+int excluir(FILE *fp){
+	Funcionario registro;
+	char cpf[12];
+	int indice,escolha;
+
+	system("cls");
+	fflush(stdin);
+	printf("Digite o CPF do Funcionário a ser excluído: ");
+	gets(cpf);
+
+	indice = buscar(fp, cpf);
+	if(indice == -1){
+		printf("CPF não encontrado!");
+		system("pause");
+		return -1;
+	}
+
+	fseek(fp,indice*sizeof(Funcionario), SEEK_SET);
+	fread(&registro, sizeof(Funcionario), 1, fp);
+	
+	printf("CPF: %s \nNome: %s \nSalario: %.2f\n", registro.CPF, registro.nome, registro.salario);
+	printf("\nConfirma Funcionário? (1-sim / 2-não): ");
+	scanf("%d",&escolha);
+
+	if(escolha == 1){
+		
+		printf("Exclusão do Funcionário com CPF %s feita com sucesso!\n\n", registro.CPF);
+		system("pause");
+	}
+	
 	return 0;
 }
 
@@ -125,7 +158,10 @@ int main() {
 		printf("\n");
 		switch (opcao) {
 			case 1:
-				inclusao(fp);
+				incluir(fp);
+				break;
+			case 2:
+				excluir(fp);
 				break;
 			case 4:
 				consultar(fp);
