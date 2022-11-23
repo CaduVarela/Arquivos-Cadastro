@@ -8,16 +8,16 @@
 /*
 Funcionalidades
 
-(X) Inclusï¿½o
+(X) Inclusão
 ( ) Consulta
-( ) Exclusï¿½o
-( ) Alteraï¿½ï¿½o
+( ) Exclusão
+( ) Alteração
 ( ) Listagem
 ( ) Lixeira
 
 */
 
-// Registro Funcionï¿½rio
+// Registro Funcionário
 typedef struct {
 	char CPF[12];
 	char nome[50];
@@ -48,7 +48,7 @@ void inclusao(FILE *fp) {
 		registro.sit = '0';
 		fwrite(&registro, sizeof(Funcionario), 1, fp);
 
-		printf("Deseja continuar? (1-sim / 0-nÃ£o): ");
+		printf("Deseja continuar? (1-sim / 0-não): ");
 		scanf("%d",&continuar);
 		fflush(stdin);
 
@@ -84,7 +84,7 @@ int consultar(FILE *fp){
 	indice = buscar(fp, cpf);
 
 	if(indice == -1){
-		printf("CPF nÃ£o encontrado!\n");
+		printf("CPF não encontrado!\n");
 		system("pause");
 		return -1;
 	}
@@ -96,6 +96,40 @@ int consultar(FILE *fp){
 	system("pause");
 
 	return 0;
+}
+
+void listar(FILE *fp, char sit) {
+	Funcionario registro;
+	int i;
+	
+	system("cls");
+	// Linha (só estilização)
+	printf(" ");
+	for (i=0; i<80; i++) printf("_");
+	printf("\n| CPF%9s | Nome%-46s | Salario    |\n", "", "");
+	printf("|--------------+----------------------------------------------------+------------|\n");
+	//
+	
+	// Parte lógica
+	fseek(fp, 0, SEEK_SET);
+	while (!feof(fp)) {
+		fread(&registro, sizeof(Funcionario), 1, fp);
+		if (registro.sit != sit || feof(fp)) continue;
+		printf("| %12s | %-50s | %10.2f |\n", registro.CPF, registro.nome, registro.salario);
+	}
+	
+	// Linha (só estilização)
+	printf("|");
+	for (i=0; i<14; i++) printf("_");
+	printf("|");
+	for (i=0; i<52; i++) printf("_");
+	printf("|");
+	for (i=0; i<12; i++) printf("_");
+	printf("|");
+	printf("\n");
+	//
+	
+	system("pause");
 }
 
 int main() {
@@ -118,17 +152,20 @@ int main() {
 		printf("6 - Lixeira\n");
 		printf("0 - Sair\n\n");
 		
-		printf("Selecione a opï¿½ï¿½o: ");
+		printf("Selecione a opção: ");
 		opcao = getche(); /* getche() retorna o codigo ASCII da tecla */
 		opcao -= 48; /* tranforma o codigo da tecla no numero correspondente */
 		
 		printf("\n");
 		switch (opcao) {
-			case 1:
+			case 1: // Inclusão
 				inclusao(fp);
 				break;
-			case 4:
+			case 4: // Consulta
 				consultar(fp);
+				break;
+			case 5: // Listar
+				listar(fp, '0');
 				break;
 			case 0: // Sair / Fechar
 				printf("Fechando...\n");
@@ -136,7 +173,7 @@ int main() {
 				exit = 1;
 				break;
 			default:
-				printf("Opï¿½ï¿½o invï¿½lida!\n");
+				printf("Opção inválida!\n");
 				Sleep(500);
 				break;
 		}
