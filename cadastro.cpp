@@ -12,6 +12,7 @@ Funcionalidades
 (X) Consulta
 (X) Exclus�o
 ( ) Altera��o
+( ) Consulta
 ( ) Listagem
 ( ) Lixeira
 
@@ -22,12 +23,13 @@ typedef struct {
 	char CPF[12];
 	char nome[50];
 	float salario;
-	char sit; // 0 --> ativo / 1 --> passivo
+	char sit; // 0 --> ativo / 1 --> excluido
 } Funcionario;
 
 void incluir(FILE *fp) {
 	Funcionario registro;
-	int continuar=1;
+	int i, num_registros;
+	
 	fseek(fp, 0, SEEK_END);
 
 	do{
@@ -61,16 +63,17 @@ int buscar(FILE *fp,char cpf[12]){
 	int i=0;
 	char cpf_corrente[12];
 	
-	while(!feof(fp)){
-		fseek(fp,i*sizeof(Funcionario),SEEK_SET);
-		fread(&cpf_corrente,sizeof(char)*12,1,fp);
-
-		if(strcmp(cpf_corrente,cpf)==0) return i;
-
-		i++;
+	fseek(fp, 0, SEEK_SET);
+	printf("");
+	for (i=0; i<num_registros; i++) {
+		//fread(registro, sizeof(Funcionario), SEEK_CUR);
+		fread(registro.CPF, sizeof(registro.CPF), 1, fp);
+		fread(registro.nome, sizeof(registro.nome), 1, fp);
+		fread(registro.salario, sizeof(registro.salario), 1, fp);
+		fread(registro.sit, sizeof(registro.sit), 1, fp);
+		if (registro.sit == '1') continue;
+		printf("%12s | %50s | %f", registro.CPF, registro.nome, registro.salario);
 	}
-	
-	return -1;
 }
 
 int consultar(FILE *fp){
@@ -137,7 +140,7 @@ int main() {
 	
 	setlocale(LC_ALL, "Portuguese");
 	
-	fp = fopen("cadfun.dad", "a+b");
+	fopen("cadfun.dad", "a+b");
 	
 	// Menu
 	do {
