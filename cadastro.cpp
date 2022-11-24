@@ -8,16 +8,16 @@
 /*
 Funcionalidades
 
-(X) Inclusão
+(X) Inclusï¿½o
 (X) Consulta
-(X) Exclusão
-( ) Alteração
+(X) Exclusï¿½o
+( ) Alteraï¿½ï¿½o
 (X) Listagem
-( ) Lixeira
+(X) Lixeira
 
 */
 
-// Registro Funcionário
+// Registro Funcionï¿½rio
 typedef struct {
 	char CPF[12];
 	char nome[50];
@@ -49,7 +49,7 @@ void incluir(FILE *fp) {
 		registro.sit = '0';
 		fwrite(&registro, sizeof(Funcionario), 1, fp);
 
-		printf("Deseja continuar? (1-sim / 0-não): ");
+		printf("Deseja continuar? (1-sim / 0-nï¿½o): ");
 		scanf("%d",&continuar);
 		fflush(stdin);
 
@@ -58,15 +58,15 @@ void incluir(FILE *fp) {
 }
 
 int buscar(FILE *fp,char cpf[12]){
+	Funcionario registro;
 	int i=0;
-	char cpf_corrente[12];
 	
 	fseek(fp, 0, SEEK_SET);
 	while(!feof(fp)){
 		fseek(fp,i*sizeof(Funcionario),SEEK_SET);
-		fread(&cpf_corrente,sizeof(char)*12,1,fp);
-
-		if(strcmp(cpf_corrente,cpf)==0) return i;
+		fread(&registro,sizeof(Funcionario),1,fp);
+		
+		if(strcmp(registro.CPF,cpf)==0 && registro.sit == '0') return i;
 
 		i++;
 	}
@@ -78,15 +78,14 @@ void listar(FILE *fp, char sit) {
 	Funcionario registro;
 	int i;
 	
-	system("cls");
-	// Linha (só estilização)
+	// Linha (sï¿½ estilizaï¿½ï¿½o)
 	printf(" ");
 	for (i=0; i<80; i++) printf("_");
 	printf("\n| CPF%9s | Nome%-46s | Salario    |\n", "", "");
 	printf("|--------------+----------------------------------------------------+------------|\n");
 	//
 	
-	// Parte lógica
+	// Parte lï¿½gica
 	fseek(fp, 0, SEEK_SET);
 	while (!feof(fp)) {
 		fread(&registro, sizeof(Funcionario), 1, fp);
@@ -94,7 +93,7 @@ void listar(FILE *fp, char sit) {
 		printf("| %12s | %-50s | %10.2f |\n", registro.CPF, registro.nome, registro.salario);
 	}
 	
-	// Linha (só estilização)
+	// Linha (sï¿½ estilizaï¿½ï¿½o)
 	printf("|");
 	for (i=0; i<14; i++) printf("_");
 	printf("|");
@@ -114,13 +113,14 @@ int consultar (FILE *fp){
 	int indice;
 
 	system("cls");
+	
 	printf("Digite o CPF: ");
 	gets(cpf);
 	fflush(stdin);
 	
 	indice = buscar(fp, cpf);
 	if(indice == -1){
-		printf("\nCPF não encontrado!\n\n");
+		printf("\nCPF nï¿½o encontrado!\n\n");
 		system("pause");
 		return -1;
 	}
@@ -135,19 +135,19 @@ int consultar (FILE *fp){
 }
 
 int excluir(FILE *fp){
+
     Funcionario registro;
     char cpf[12];
     int indice,escolha;
 
     system("cls");
     fflush(stdin);
-    printf("Digite o CPF do Funcionário a ser excluído: ");
+    printf("Digite o CPF do Funcionï¿½rio a ser excluï¿½do: ");
     gets(cpf);
-
 
     indice = buscar(fp, cpf);
     if(indice == -1){
-        printf("CPF não encontrado!");
+        printf("CPF nï¿½o encontrado!\n");
         system("pause");
         return -1;
     }
@@ -155,15 +155,21 @@ int excluir(FILE *fp){
     fseek(fp, indice*sizeof(Funcionario), SEEK_SET);
     fread(&registro, sizeof(Funcionario), 1, fp);
 
-    printf("CPF: %s \nNome: %s \nSalario: %.2f\n", registro.CPF, registro.nome, registro.salario);
-    printf("\nConfirma Funcionário? (1-sim / 2-não): ");
+    printf("CPF: %s \nNome: %s \nSalario: %.2f\n",registro.CPF, registro.nome, registro.salario);
+    printf("\nConfirma Funcionï¿½rio? (1-sim / 2-nï¿½o): ");
     scanf("%d",&escolha);
 
     if(escolha == 1){
-        printf("Exclusão do Funcionário com CPF %s feita com sucesso!\n\n", registro.CPF);
+		registro.sit = '1';
+		fseek(fp, indice*sizeof(Funcionario), SEEK_SET);
+		// fseek(fp, (indice+1)*sizeof(Funcionario)-sizeof(char), SEEK_SET);
+		// fseek(fp, indice*sizeof(Funcionario)+sizeof(Funcionario)-sizeof(char), SEEK_SET);
+		//fwrite(&registro.sit, sizeof(char), 1, fp);
+		fwrite(&registro, sizeof(Funcionario), 1, fp);
+
+        printf("Exclusï¿½o do Funcionï¿½rio com CPF %s feita com sucesso!\n\n", registro.CPF);
         system("pause");
     }
-
     return 0;
 }
 
@@ -174,7 +180,10 @@ int main() {
 	setlocale(LC_ALL, "Portuguese");
 	
 	fp = fopen("cadfun.dad", "a+b");
+	fclose(fp);
 	
+	fp = fopen("cadfun.dad", "r+b"); // para sobreescrever
+
 	// Menu
 	do {
 		system("cls");
@@ -187,10 +196,11 @@ int main() {
 		printf("6 - Lixeira\n");
 		printf("0 - Sair\n\n");
 		
-		printf("Selecione a opção: ");
+		printf("Selecione a opï¿½ï¿½o: ");
 		opcao = getche(); /* getche() retorna o codigo ASCII da tecla */
 		opcao -= 48; /* tranforma o codigo da tecla no numero correspondente */
-		
+		fflush(stdin);
+
 		printf("\n");
 		switch (opcao) {
 			case 1:
@@ -203,7 +213,14 @@ int main() {
 				consultar(fp);
 				break;
 			case 5: // Listar
+				system("cls");
+				printf(" %35s CADASTROS \n", "");
 				listar(fp, '0');
+				break;
+			case 6: // Lixeira
+				system("cls");
+				printf(" %36s LIXEIRA \n", "");
+				listar(fp, '1');
 				break;
 			case 0: // Sair / Fechar
 				printf("Fechando...\n");
@@ -211,7 +228,7 @@ int main() {
 				exit = 1;
 				break;
 			default:
-				printf("Opção inválida!\n");
+				printf("Opï¿½ï¿½o invï¿½lida!\n");
 				Sleep(500);
 				break;
 		}
