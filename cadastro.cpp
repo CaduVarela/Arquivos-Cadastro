@@ -11,23 +11,21 @@ Funcionalidades
 (X) Inclus�o
 (X) Consulta
 (X) Exclus�o
-( ) Altera��o
+(X) Altera��o
 (X) Listagem
 (X) Lixeira
 
 */
 
 // Registro Funcion�rio
-typedef struct
-{
+typedef struct {
 	char CPF[12];
 	char nome[50];
 	float salario;
 	char sit; // 0 --> ativo / 1 --> passivo
 } Funcionario;
 
-void incluir(FILE *fp)
-{
+void incluir(FILE *fp) {
 	Funcionario registro;
 	int continuar = 1;
 	fseek(fp, 0, SEEK_END);
@@ -59,7 +57,7 @@ void incluir(FILE *fp)
 	} while (continuar);
 }
 
-int buscar(FILE *fp,char cpf[12]){
+int buscar(FILE *fp,char cpf[12]) {
 	Funcionario registro;
 	int i=0;
 	
@@ -76,8 +74,7 @@ int buscar(FILE *fp,char cpf[12]){
 	return -1;
 }
 
-void listar(FILE *fp, char sit)
-{
+void listar(FILE *fp, char sit) {
 	Funcionario registro;
 	int i;
 	
@@ -91,8 +88,7 @@ void listar(FILE *fp, char sit)
 
 	// Parte l�gica
 	fseek(fp, 0, SEEK_SET);
-	while (!feof(fp))
-	{
+	while (!feof(fp)){
 		fread(&registro, sizeof(Funcionario), 1, fp);
 		if (registro.sit != sit || feof(fp))
 			continue;
@@ -116,8 +112,7 @@ void listar(FILE *fp, char sit)
 	system("pause");
 }
 
-int consultar(FILE *fp)
-{
+int consultar(FILE *fp) {
 	Funcionario registro;
 	char cpf[12];
 	int indice;
@@ -129,8 +124,7 @@ int consultar(FILE *fp)
 	fflush(stdin);
 
 	indice = buscar(fp, cpf);
-	if (indice == -1)
-	{
+	if (indice == -1){
 		printf("\nCPF n�o encontrado!\n\n");
 		system("pause");
 		return -1;
@@ -145,7 +139,7 @@ int consultar(FILE *fp)
 	return 0;
 }
 
-int excluir(FILE *fp){
+int excluir(FILE *fp) {
 
     Funcionario registro;
     char cpf[12];
@@ -184,8 +178,7 @@ int excluir(FILE *fp){
     return 0;
 }
 
-int alterar(FILE *fp)
-{
+int alterar(FILE *fp) {
 	Funcionario registro;
 	char cpf[12];
 	int indice, continuar = 1, continuar2 = 1, alteracao;
@@ -196,8 +189,7 @@ int alterar(FILE *fp)
 	fflush(stdin);
 
 	indice = buscar(fp, cpf);
-	if (indice == -1)
-	{
+	if (indice == -1){
 		printf("\nCPF não encontrado!\n\n");
 		system("pause");
 		return -1;
@@ -205,7 +197,7 @@ int alterar(FILE *fp)
 
 	fseek(fp, indice * sizeof(Funcionario), SEEK_SET);
 	fread(&registro, sizeof(Funcionario), 1, fp);
-	printf("\n1-CPF: %s \n2-Nome: %s \n3-Salario: %.2f\n\n", registro.CPF, registro.nome, registro.salario);
+	printf("\n1 - CPF: %s \n2 - Nome: %s \n3 - Salario: %.2f\n\n", registro.CPF, registro.nome, registro.salario);
 	printf("Deseja alterar esse registro? (1-sim / 0-nao): \n");
 	scanf("%d", &continuar);
 	fflush(stdin);
@@ -258,8 +250,7 @@ int alterar(FILE *fp)
 		return -1;
 }
 
-int main()
-{
+int main() {
 	int opcao, exit = 0;
 	FILE *fp;
 
@@ -271,8 +262,7 @@ int main()
 	fp = fopen("cadfun.dad", "r+b"); // para sobreescrever
 
 	// Menu
-	do
-	{
+	do{
 		system("cls");
 		printf("-= MENU =-\n");
 		printf("1 - Adicionar\n");
@@ -295,6 +285,9 @@ int main()
 				break;
 			case 2:
 				excluir(fp);
+				break;
+			case 3:
+				alterar(fp);
 				break;
 			case 4: // Consulta
 				consultar(fp);
