@@ -11,9 +11,9 @@ Funcionalidades
 (X) Inclus�o
 (X) Consulta
 (X) Exclus�o
-( ) Altera��o
+(X) Altera��o
 (X) Listagem
-( ) Lixeira
+(X) Lixeira
 
 */
 
@@ -189,6 +189,7 @@ int alterar(FILE *fp)
 	char cpf[12];
 	int indice, continuar = 1, continuar2 = 1, alteracao;
 
+	// buscar o registro
 	system("cls");
 	printf("Digite o CPF: ");
 	gets(cpf);
@@ -209,45 +210,48 @@ int alterar(FILE *fp)
 	scanf("%d", &continuar);
 	fflush(stdin);
 
+	// alteração das variaveis do registro
 	if (continuar == 1)
 	{
-		printf("O que deseja alterar?\n");
-		scanf("%d", &alteracao);
-		fflush(stdin);
-
 		do
 		{
+			printf("O que deseja alterar?\n");
+			scanf("%d", &alteracao);
+			fflush(stdin);
+
 			switch (alteracao)
 			{
 			case 1:
 				system("cls");
-				printf("Digite o novo CPF\n");
+				printf("Digite o novo CPF: \n");
 				gets(registro.CPF);
 				fflush(stdin);
 				break;
 			case 2:
 				system("cls");
-				printf("Digite o novo nome\n");
+				printf("Digite o novo nome: \n");
 				gets(registro.nome);
 				fflush(stdin);
 				break;
 			case 3:
 				system("cls");
-				printf("Digite o novo salário\n");
+				printf("Digite o novo salário: \n");
 				scanf("%f", &registro.salario);
 				fflush(stdin);
 				break;
 			default:
-				printf("Opção não encontrada");
+				printf("Opção inválida!\n");
 				break;
 			}
 
 			printf("Deseja alterar algo a mais? (1-sim / 0-não): \n\n");
 			scanf("%d", &continuar2);
+			fflush(stdin);
 			if (continuar2 == 1)
 				printf("\n1-CPF: %s \n2-Nome: %s \n3-Salario: %.2f\n\n", registro.CPF, registro.nome, registro.salario);
 		} while (continuar2 == 1);
 
+		// alteração no arquivo
 		fseek(fp, indice * sizeof(Funcionario), SEEK_SET);
 		fwrite(&registro, sizeof(Funcionario), 1, fp);
 
