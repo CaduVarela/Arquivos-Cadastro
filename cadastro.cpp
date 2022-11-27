@@ -25,20 +25,31 @@ typedef struct {
 	char sit; // 0 --> ativo / 1 --> passivo
 } Funcionario;
 
+//Protótipos
+void incluir(FILE *);
+int buscar(FILE *,char [12]);
+void listar(FILE *, char );
+int consultar(FILE *);
+int excluir(FILE *);
+int alterar(FILE *); 
+
 void incluir(FILE *fp) {
 	Funcionario registro;
-	int continuar = 1;
+	int continuar = 1, duplicata = 0;
 	fseek(fp, 0, SEEK_END);
 
 	do
 	{
 		system("cls");
 		fflush(stdin);
-		printf("Digite o CPF: ");
-		// falta checar a primary key
-		gets(registro.CPF);
-		fflush(stdin);
-
+		do{
+			printf("Digite o CPF: ");
+			gets(registro.CPF);
+			fflush(stdin);
+			duplicata = buscar(fp,registro.CPF);
+			if(duplicata >= 0) printf("CPF já cadastrado!\n\n");
+		}while(duplicata >= 0);
+		
 		printf("Digite o nome: ");
 		gets(registro.nome);
 		fflush(stdin);
@@ -181,7 +192,7 @@ int excluir(FILE *fp) {
 int alterar(FILE *fp) {
 	Funcionario registro;
 	char cpf[12];
-	int indice, continuar = 1, continuar2 = 1, alteracao;
+	int indice, continuar = 1, continuar2 = 1, alteracao, duplicata = 0;
 
 	// buscar o registro
 	system("cls");
@@ -216,9 +227,13 @@ int alterar(FILE *fp) {
 			{
 			case 1:
 				system("cls");
-				printf("Digite o novo CPF: \n");
-				gets(registro.CPF);
-				fflush(stdin);
+				do{
+					printf("Digite o CPF: ");
+					gets(registro.CPF);
+					fflush(stdin);
+					duplicata = buscar(fp,registro.CPF);
+					if(duplicata >= 0) printf("CPF já cadastrado!\n\n");
+				}while(duplicata >= 0);
 				break;
 			case 2:
 				system("cls");
